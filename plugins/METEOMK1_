@@ -1,0 +1,43 @@
+#!/usr/bin/python
+import urllib
+import json
+import sys
+import os
+
+# Set warning / critials
+# [METEOMK1_*]
+#  env.temperature_warning 23
+#  env.temperature_critical 27
+#  env.humidity_warning 60
+#  env.humidity_critical 70
+#  env.pressure_critical 1100
+#  env.pressure_warning 1200
+#
+
+
+scriptname=os.path.basename(__file__)
+parts=scriptname.partition('_')
+modulename=parts[0]
+serial=parts[2].partition('-')[0]
+category=parts[2].partition('-')[2]
+
+url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (modulename,serial)
+response = urllib.urlopen(url);
+data = json.loads(response.read())
+
+if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
+    print "yes"
+elif len(sys.argv) == 2 and sys.argv[1] == "config":
+    print 'graph_title %s' % (scriptname)
+    print 'graph_vlabel %s in %s' % (category, data[category]["unit"])
+    print 'graph_category yoctopuce'
+
+    print '%s.label %s' % (category,data[category]["unit"])
+    print '%s.draw AREA' % category
+    print '%s.type GAUGE' % category
+    varname="%s_warning" % category
+    print '%s.warning %s' % (category,os.environ.get(varname))
+    varname="%s_critical" % category
+    print '%s.critical %s' % (category,os.environ.get(varname))
+else:
+    print '%s.value %s' % (category,data[category]["advertisedValue"])

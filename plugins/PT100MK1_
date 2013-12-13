@@ -1,0 +1,27 @@
+#!/usr/bin/python
+import urllib
+import json
+import sys
+import os
+
+scriptname=os.path.basename(__file__)
+parts=scriptname.partition('_')
+url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
+response = urllib.urlopen(url);
+data = json.loads(response.read())
+
+if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
+    print "yes"
+elif len(sys.argv) == 2 and sys.argv[1] == "config":
+    print 'graph_title %s temperature measurement' % scriptname
+    print 'graph_vlabel temperature in %s' % data["temperature"]["unit"]
+    print 'graph_category yoctopuce'
+    print 'graph_args --base 1000'
+
+    print 'temp.label %s' % data["temperature"]["unit"]
+    print 'temp.draw AREA'
+    print 'temp.type GAUGE'
+
+else:
+    print 'temp.value %s' % data["temperature"]["advertisedValue"]
+

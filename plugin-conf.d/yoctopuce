@@ -1,0 +1,7 @@
+[METEOMK1_*]
+  env.temperature_warning 23
+  env.temperature_critical 27
+  env.humidity_warning 60
+  env.humidity_critical 70
+  env.pressure_critical 1100
+  env.pressure_warning 1200
