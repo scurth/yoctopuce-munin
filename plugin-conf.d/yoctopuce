@@ -5,3 +5,7 @@
   env.humidity_critical 70
   env.pressure_critical 1100
   env.pressure_warning 1200
+
+[YCO2MK01_*]
+   env.co2_warning 1300
+   env.co2_critical 3000

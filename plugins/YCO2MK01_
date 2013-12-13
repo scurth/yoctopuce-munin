@@ -4,6 +4,11 @@ import json
 import sys
 import os
 
+# sample config
+# [YCO2MK01_*]
+#   env.co2_warning 1300
+#   env.co2_critical 3000
+
 scriptname=os.path.basename(__file__)
 parts=scriptname.partition('_')
 url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
@@ -20,8 +25,9 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print 'co2.label Current value in %s' % data["carbonDioxide"]["unit"]
     print 'co2.draw AREA'
     print 'co2.type GAUGE'
-    print 'co2.warning 1000'
-    print 'co2.critical 3000'
+    print 'co2.warning %s' % os.environ.get("co2_warning")
+    print 'co2.critical %s' % os.environ.get("co2_critical")
+
 
     print 'co2low.label Lowest CO2 value in %s' % data["carbonDioxide"]["unit"]
     print 'co2low.draw LINE1'
