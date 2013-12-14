@@ -7,6 +7,7 @@ Munin Plugins for yoctopuce.com sensors
 * [How to install](#how-to-install)
 * [Munin Autoconfigure](#munin-autoconfigure)
 * [How to find the serialnumber](#how-to-find-the-serialnumber)
+* [License](#license)
 * [Donate Me ![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TZMF3HP322F5U)
 
 ## How to install
@@ -46,3 +47,11 @@ This step is only needed if you do not like to use the munin autoconf functional
 You need to install the yVirtualhub software. This will listen on port 4444 and you can directly conect with the browser of your choice. All yoctopuce devices wil show up like 'PT100MK1-14BD3'. The first part is the module type and the second one the serialnumber. In this example the link will be:
 
     ln -s /usr/share/munin/plugins/PT100MK1_ PT100MK1_14BD3
+
+## License
+----------
+[[Back To Top]](#jump-to-section)
+
+Copyright © 2013 scurth <github@sascha-curth.de>
+
+This software is licensed under [MIT License](http://scurth.mit-license.org/).
