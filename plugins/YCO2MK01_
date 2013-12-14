@@ -4,8 +4,8 @@
 #
 # sample config
 # [YCO2MK01_*]
-#   env.co2_warning 1300
-#   env.co2_critical 3000
+#   env.carbonDioxide_warning 1300
+#   env.carbonDioxide_critical 3000
 
 
 import urllib
@@ -49,8 +49,10 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
     print '%s.draw AREA' % measurementtype
     print '%s.type GAUGE' % measurementtype
-    print '%s.warning %s' % (measurementtype,os.environ.get("co2_warning"))
-    print '%s.critical %s' % (measurementtype,os.environ.get("co2_critical"))
+    varname="%s_warning" % measurementtype
+    print '%s.warning %s' % (measurementtype,os.environ.get(varname))
+    varname="%s_critical" % measurementtype
+    print '%s.critical %s' % (measurementtype,os.environ.get(varname))
 
     print '%slow.label Lowest %s value in %s' % (measurementtype,measurementtype,devicedata[measurementtype]["unit"])
     print '%slow.draw LINE1' % measurementtype
