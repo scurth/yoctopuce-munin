@@ -5,7 +5,7 @@ Munin Plugins for yoctopuce.com sensors
 
 ## Jump to Section
 * [How to install](#how-to-install)
-* [Munin Autoconfigure](#hmunin-autoconfigure)
+* [Munin Autoconfigure](#munin-autoconfigure)
 * [How to find the serialnumber](#how-to-find-the-serialnumber)
 
 ## How to install
