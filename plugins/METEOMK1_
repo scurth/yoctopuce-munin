@@ -1,4 +1,7 @@
 #!/usr/bin/python
+#
+# Author: Sascha Curth
+#
 import urllib
 import json
 import sys
@@ -12,27 +15,48 @@ import os
 #  env.humidity_critical 70
 #  env.pressure_critical 1100
 #  env.pressure_warning 1200
-#
-
 
 scriptname=os.path.basename(__file__)
-parts=scriptname.partition('_')
-modulename=parts[0]
-serial=parts[2].partition('-')[0]
-category=parts[2].partition('-')[2]
+modulename=scriptname.partition('_')[0]
+serial=scriptname.partition('_')[2].partition('.')[0]
+category=scriptname.partition('_')[2].partition('.')[2]
 
-url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (modulename,serial)
-response = urllib.urlopen(url);
-data = json.loads(response.read())
+def initDeviceinfo():
+    deviceurl = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (modulename,serial)
+    deviceresponse = urllib.urlopen(deviceurl);
+    devicedata = json.loads(deviceresponse.read())
+    return devicedata
 
 if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
+    #Magic markers for munin autoconf
+    #%# family=auto
+    #%# capabilities=autoconf suggest
     print "yes"
+
+elif len(sys.argv) == 2 and sys.argv[1] == "suggest":
+    huburl = 'http://127.0.0.1:4444/api.json'
+    hubresponse = urllib.urlopen(huburl);
+    hubdata = json.loads(hubresponse.read())
+    for key in hubdata["services"]["yellowPages"]["Temperature"]:
+        if "METEOMK1" in key["hardwareId"]:
+            serial=key["hardwareId"].partition('-')[2]
+            print "%s" % serial
+    for key in hubdata["services"]["yellowPages"]["Pressure"]:
+        if "METEOMK1" in key["hardwareId"]:
+            serial=key["hardwareId"].partition('-')[2]
+            print "%s" % serial
+    for key in hubdata["services"]["yellowPages"]["Humidity"]:
+        if "METEOMK1" in key["hardwareId"]:
+            serial=key["hardwareId"].partition('-')[2]
+            print "%s" % serial
+
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
+    devicedata=initDeviceinfo()
     print 'graph_title %s' % (scriptname)
-    print 'graph_vlabel %s in %s' % (category, data[category]["unit"])
+    print 'graph_vlabel %s in %s' % (category, devicedata[category]["unit"])
     print 'graph_category yoctopuce'
 
-    print '%s.label %s' % (category,data[category]["unit"])
+    print '%s.label %s' % (category,devicedata[category]["unit"])
     print '%s.draw AREA' % category
     print '%s.type GAUGE' % category
     varname="%s_warning" % category
@@ -40,4 +64,5 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     varname="%s_critical" % category
     print '%s.critical %s' % (category,os.environ.get(varname))
 else:
-    print '%s.value %s' % (category,data[category]["advertisedValue"])
+    devicedata=initDeviceinfo()
+    print '%s.value %s' % (category,devicedata[category]["advertisedValue"])

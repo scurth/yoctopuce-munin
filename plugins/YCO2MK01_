@@ -14,7 +14,15 @@ import sys
 import os
 
 scriptname=os.path.basename(__file__)
-parts=scriptname.partition('_')
+modulename=scriptname.partition('_')[0]
+
+def initDeviceinfo():
+    serial=scriptname.partition('_')[2].partition('.')[0]
+    deviceurl = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (modulename,serial)
+    deviceresponse = urllib.urlopen(deviceurl)
+    devicedata = json.loads(deviceresponse.read())
+    return devicedata
+
 if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
     #Magic markers for munin autoconf
     #%# family=auto
@@ -22,40 +30,36 @@ if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
     print "yes"
 
 elif len(sys.argv) == 2 and sys.argv[1] == "suggest":
-    url = 'http://127.0.0.1:4444/api.json'
-    response = urllib.urlopen(url);
-    data = json.loads(response.read())
-    for key in data["services"]["yellowPages"]["CarbonDioxide"]:
+    huburl = 'http://127.0.0.1:4444/api.json'
+    hubresponse = urllib.urlopen(huburl);
+    hubdata = json.loads(hubresponse.read())
+    for key in hubdata["services"]["yellowPages"]["CarbonDioxide"]:
         if "YCO2MK01" in key["hardwareId"]:
             serial=key["hardwareId"].partition('-')[2].partition('.')[0]
             print "%s" % serial
 
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
-    url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
-    response = urllib.urlopen(url);
-    data = json.loads(response.read())
+    devicedata=initDeviceinfo()
     print 'graph_title %s CO2 measurement' % scriptname
-    print 'graph_vlabel CO2 in %s' % data["carbonDioxide"]["unit"]
+    print 'graph_vlabel CO2 in %s' % devicedata["carbonDioxide"]["unit"]
     print 'graph_category yoctopuce'
 
-    print 'co2.label Current value in %s' % data["carbonDioxide"]["unit"]
+    print 'co2.label Current value in %s' % devicedata["carbonDioxide"]["unit"]
     print 'co2.draw AREA'
     print 'co2.type GAUGE'
     print 'co2.warning %s' % os.environ.get("co2_warning")
     print 'co2.critical %s' % os.environ.get("co2_critical")
 
-    print 'co2low.label Lowest CO2 value in %s' % data["carbonDioxide"]["unit"]
+    print 'co2low.label Lowest CO2 value in %s' % devicedata["carbonDioxide"]["unit"]
     print 'co2low.draw LINE1'
     print 'co2low.type GAUGE'
 
-    print 'co2high.label Highest CO2 value in %s' % data["carbonDioxide"]["unit"]
+    print 'co2high.label Highest CO2 value in %s' % devicedata["carbonDioxide"]["unit"]
     print 'co2high.draw LINE1'
     print 'co2high.type GAUGE'
 
 else:
-    url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
-    response = urllib.urlopen(url);
-    data = json.loads(response.read())
-    print 'co2.value %s' % data["carbonDioxide"]["advertisedValue"]
-    print 'co2high.value %d' % (int(data["carbonDioxide"]["highestValue"]) / int(data["carbonDioxide"]["resolution"]))
-    print 'co2low.value %d' % (int(data["carbonDioxide"]["lowestValue"]) / int(data["carbonDioxide"]["resolution"]))
+    devicedata=initDeviceinfo()
+    print 'co2.value %s' % devicedata["carbonDioxide"]["advertisedValue"]
+    print 'co2high.value %d' % (int(devicedata["carbonDioxide"]["highestValue"]) / int(devicedata["carbonDioxide"]["resolution"]))
+    print 'co2low.value %d' % (int(devicedata["carbonDioxide"]["lowestValue"]) / int(devicedata["carbonDioxide"]["resolution"]))
