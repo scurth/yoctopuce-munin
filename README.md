@@ -52,6 +52,6 @@ You need to install the yVirtualhub software. This will listen on port 4444 and 
 ----------
 [[Back To Top]](#jump-to-section)
 
-Copyright © 2013 Sascha Curth <github@sascha-curth.de>
+Copyright © 2013 Sascha Curth
 
 This software is licensed under [MIT License](http://scurth.mit-license.org/).
