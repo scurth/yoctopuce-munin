@@ -52,11 +52,11 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print '%s.warning %s' % (measurementtype,os.environ.get("co2_warning"))
     print '%s.critical %s' % (measurementtype,os.environ.get("co2_critical"))
 
-    print '%slow.label Lowest CO2 value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
+    print '%slow.label Lowest %s value in %s' % (measurementtype,measurementtype,devicedata[measurementtype]["unit"])
     print '%slow.draw LINE1' % measurementtype
     print '%slow.type GAUGE' % measurementtype
 
-    print '%shigh.label Highest CO2 value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
+    print '%shigh.label Highest %s value in %s' % (measurementtype,measurementtype,devicedata[measurementtype]["unit"])
     print '%shigh.draw LINE1' % measurementtype
     print '%shigh.type GAUGE' % measurementtype
 
