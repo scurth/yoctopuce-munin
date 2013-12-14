@@ -2,17 +2,25 @@
 #
 # Author: Sascha Curth
 #
+# sample config
+# [YCO2MK01_*]
+#   env.co2_warning 1300
+#   env.co2_critical 3000
+
+
 import urllib
 import json
 import sys
 import os
 
+measurementtype="temperature"
+apiuri='http://127.0.0.1:4444'
 scriptname=os.path.basename(__file__)
 modulename=scriptname.partition('_')[0]
 
 def initDeviceinfo():
     serial=scriptname.partition('_')[2].partition('.')[0]
-    deviceurl = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (modulename,serial)
+    deviceurl = '%s/bySerial/%s-%s/api.json' % (apiuri,modulename,serial)
     deviceresponse = urllib.urlopen(deviceurl)
     devicedata = json.loads(deviceresponse.read())
     return devicedata
@@ -24,26 +32,26 @@ if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
     print "yes"
 
 elif len(sys.argv) == 2 and sys.argv[1] == "suggest":
-    huburl = 'http://127.0.0.1:4444/api.json'
+    huburl = '%s/api.json' % apiuri
     hubresponse = urllib.urlopen(huburl);
     hubdata = json.loads(hubresponse.read())
-    for key in hubdata["services"]["yellowPages"]["Temperature"]:
-        if "PT100MK1" in key["hardwareId"]:
+    for key in hubdata["services"]["yellowPages"][''.join(measurementtype[0].upper() + measurementtype[1:])]:
+        if modulename in key["hardwareId"]:
             serial=key["hardwareId"].partition('-')[2].partition('.')[0]
             print "%s" % serial
 
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
     devicedata=initDeviceinfo()
     print 'graph_title %s' % scriptname
-    print 'graph_vlabel temperature in %s' % devicedata["temperature"]["unit"]
+    print 'graph_vlabel %s in %s' % (''.join(measurementtype[0].upper() + measurementtype[1:]),devicedata[measurementtype]["unit"])
     print 'graph_category yoctopuce'
-    print 'graph_args --base 1000'
 
-    print 'temp.label %s' % devicedata["temperature"]["unit"]
-    print 'temp.draw AREA'
-    print 'temp.type GAUGE'
+    print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
+    print '%s.draw AREA' % measurementtype
+    print '%s.type GAUGE' % measurementtype
+    print '%s.warning %s' % (measurementtype,os.environ.get("co2_warning"))
+    print '%s.critical %s' % (measurementtype,os.environ.get("co2_critical"))
 
 else:
     devicedata=initDeviceinfo()
-    print 'temp.value %s' % devicedata["temperature"]["advertisedValue"]
-
+    print '%s.value %s' % (measurementtype,devicedata[measurementtype]["advertisedValue"])
