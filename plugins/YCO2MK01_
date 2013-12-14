@@ -42,7 +42,8 @@ elif len(sys.argv) == 2 and sys.argv[1] == "suggest":
 
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
     devicedata=initDeviceinfo()
-    print 'graph_title %s' % scriptname
+    logicalname=devicedata["module"]["logicalName"]
+    print 'graph_title %s %s' % (scriptname,logicalname)
     print 'graph_vlabel %s in %s' % (''.join(measurementtype[0].upper() + measurementtype[1:]),devicedata[measurementtype]["unit"])
     print 'graph_category yoctopuce'
 
