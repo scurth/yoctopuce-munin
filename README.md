@@ -3,11 +3,12 @@ yocotpuce-munin
 
 Munin Plugins for yoctopuce.com sensors
 
-* auto-gen TOC:
-{:toc}
+## Jump to Section
+* [How to install](#how-to-install)
 
-How to install
---------------
+## How to install
+[[Back To Top]](#jump-to-section)
+-----------------
 
 Copy plugins from the 'plugins' folder:
 
