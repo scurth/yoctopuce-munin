@@ -23,8 +23,16 @@ Create symlink for your devices
 Copy plugin config
     cp plugin-conf.d/* /etc/munin/plugin-conf.d/
 
+Munin Autoconfigure
+-------------------
+The modules can be configured automatically
+
+    munin-node-configure --suggest --shell
+
 How to find the serialnumber
 ----------------------------
+
+This step is only needed if you do not like to use the munin autoconf functionality.
 
 You need to install the yVirtualhub software. This will listen on port 4444 and you can directly conect with the browser of your choice. All yoctopuce devices wil show up like 'PT100MK1-14BD3'. The first part is the module type and the second one the serialnumber. In this example the link will be:
 

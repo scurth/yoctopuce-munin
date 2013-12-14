@@ -1,23 +1,39 @@
 #!/usr/bin/python
-import urllib
-import json
-import sys
-import os
-
+#
+# Author: Sascha Curth
+#
 # sample config
 # [YCO2MK01_*]
 #   env.co2_warning 1300
 #   env.co2_critical 3000
 
+
+import urllib
+import json
+import sys
+import os
+
 scriptname=os.path.basename(__file__)
 parts=scriptname.partition('_')
-url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
-response = urllib.urlopen(url);
-data = json.loads(response.read())
-
 if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
+    #Magic markers for munin autoconf
+    #%# family=auto
+    #%# capabilities=autoconf suggest
     print "yes"
+
+elif len(sys.argv) == 2 and sys.argv[1] == "suggest":
+    url = 'http://127.0.0.1:4444/api.json'
+    response = urllib.urlopen(url);
+    data = json.loads(response.read())
+    for key in data["services"]["yellowPages"]["CarbonDioxide"]:
+        if "YCO2MK01" in key["hardwareId"]:
+            serial=key["hardwareId"].partition('-')[2].partition('.')[0]
+            print "%s" % serial
+
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
+    url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
+    response = urllib.urlopen(url);
+    data = json.loads(response.read())
     print 'graph_title %s CO2 measurement' % scriptname
     print 'graph_vlabel CO2 in %s' % data["carbonDioxide"]["unit"]
     print 'graph_category yoctopuce'
@@ -28,7 +44,6 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print 'co2.warning %s' % os.environ.get("co2_warning")
     print 'co2.critical %s' % os.environ.get("co2_critical")
 
-
     print 'co2low.label Lowest CO2 value in %s' % data["carbonDioxide"]["unit"]
     print 'co2low.draw LINE1'
     print 'co2low.type GAUGE'
@@ -38,6 +53,9 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print 'co2high.type GAUGE'
 
 else:
+    url = 'http://127.0.0.1:4444/bySerial/%s-%s/api.json' % (parts[0],parts[2])
+    response = urllib.urlopen(url);
+    data = json.loads(response.read())
     print 'co2.value %s' % data["carbonDioxide"]["advertisedValue"]
     print 'co2high.value %d' % (int(data["carbonDioxide"]["highestValue"]) / int(data["carbonDioxide"]["resolution"]))
     print 'co2low.value %d' % (int(data["carbonDioxide"]["lowestValue"]) / int(data["carbonDioxide"]["resolution"]))
