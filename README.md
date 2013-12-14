@@ -3,11 +3,14 @@ yocotpuce-munin
 
 Munin Plugins for yoctopuce.com sensors
 
-* auto-gen TOC:
-{:toc}
+## Jump to Section
+* [How to install](#how-to-install)
+* [Munin Autoconfigure](#munin-autoconfigure)
+* [How to find the serialnumber](#how-to-find-the-serialnumber)
 
-How to install
---------------
+## How to install
+-----------------
+[[Back To Top]](#jump-to-section)
 
 Copy plugins from the 'plugins' folder:
 
@@ -25,14 +28,17 @@ Create symlink for your devices
 Copy plugin config
     cp plugin-conf.d/* /etc/munin/plugin-conf.d/
 
-Munin Autoconfigure
+## Munin Autoconfigure
 -------------------
+[[Back To Top]](#jump-to-section)
+
 The modules can be configured automatically
 
     munin-node-configure --suggest --shell
 
-How to find the serialnumber
+## How to find the serialnumber
 ----------------------------
+[[Back To Top]](#jump-to-section)
 
 This step is only needed if you do not like to use the munin autoconf functionality.
 
