@@ -7,6 +7,7 @@ Munin Plugins for yoctopuce.com sensors
 * [How to install](#how-to-install)
 * [Munin Autoconfigure](#munin-autoconfigure)
 * [How to find the serialnumber](#how-to-find-the-serialnumber)
+* [Donate Me [](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TZMF3HP322F5U)
 
 ## How to install
 -----------------
