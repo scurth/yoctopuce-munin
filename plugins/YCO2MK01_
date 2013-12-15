@@ -48,7 +48,7 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print 'graph_category yoctopuce'
 
     print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
-    print '%s.draw AREA' % measurementtype
+    print '%s.draw LINE1' % measurementtype
     print '%s.type GAUGE' % measurementtype
     varname="%s_warning" % measurementtype
     print '%s.warning %s' % (measurementtype,os.environ.get(varname))

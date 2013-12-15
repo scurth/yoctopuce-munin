@@ -19,8 +19,8 @@ import os
 apiuri='http://127.0.0.1:4444'
 scriptname=os.path.basename(__file__)
 modulename=scriptname.partition('_')[0]
-serial=scriptname.partition('_')[2].partition('.')[0]
-category=scriptname.partition('_')[2].partition('.')[2]
+serial=scriptname.partition('_')[2].partition('_')[0]
+category=scriptname.partition('_')[2].partition('_')[2]
 
 def initDeviceinfo():
     deviceurl = '%s/bySerial/%s-%s/api.json' % (apiuri,modulename,serial)
@@ -59,7 +59,7 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print 'graph_category yoctopuce'
 
     print '%s.label %s' % (category,devicedata[category]["unit"])
-    print '%s.draw AREA' % category
+    print '%s.draw LINE1' % category
     print '%s.type GAUGE' % category
     varname="%s_warning" % category
     print '%s.warning %s' % (category,os.environ.get(varname))
