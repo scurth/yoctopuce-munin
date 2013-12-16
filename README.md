@@ -5,51 +5,37 @@ Munin Plugins for yoctopuce.com sensors
 
 ## Jump to Section
 * [How to install](#how-to-install)
-* [Munin Autoconfigure](#munin-autoconfigure)
-* [How to find the serialnumber](#how-to-find-the-serialnumber)
+* [Notes](#notes)
 * [License](#license)
 * [Donate Me ![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TZMF3HP322F5U)
 
 ## How to install
------------------
+---
 [[Back To Top]](#jump-to-section)
 
 Copy plugins from the 'plugins' folder:
 
-    cp plugins/* /usr/share/munin/plugins
+    cp plugins/YOCTOPUCE_ /usr/share/munin/plugins
 
-Create symlink for your devices
-
-    cd /etc/munin/plugins
-    ln -s /usr/share/munin/plugins/METEOMK1_ METEOMK1_<yourserialnumber>_temperature
-    ln -s /usr/share/munin/plugins/METEOMK1_ METEOMK1_<yourserialnumber>_pressure
-    ln -s /usr/share/munin/plugins/METEOMK1_ METEOMK1_<yourserialnumber>_humidity
-    ln -s /usr/share/munin/plugins/YCO2MK01_ YCO2MK01_<yourserialnumber>
-    ln -s /usr/share/munin/plugins/PT100MK1_ PT100MK1_<yourserialnumber>
-
-Copy plugin config
-    cp plugin-conf.d/* /etc/munin/plugin-conf.d/
-
-## Munin Autoconfigure
--------------------
-[[Back To Top]](#jump-to-section)
-
-The modules can be configured automatically
-
+Create symlink for your devices (run as root)
+    
     munin-node-configure --suggest --shell
 
-## How to find the serialnumber
-----------------------------
-[[Back To Top]](#jump-to-section)
+Create list of threshold keys (run as root)
 
-This step is only needed if you do not like to use the munin autoconf functionality.
+    /usr/share/munin/plugins/YOCTOPUCE_ suggest env >> /etc/munin/plugin-conf.d/yoctopuce 
 
-You need to install the yVirtualhub software. This will listen on port 4444 and you can directly conect with the browser of your choice. All yoctopuce devices wil show up like 'PT100MK1-14BD3'. The first part is the module type and the second one the serialnumber. In this example the link will be:
+Afterwards you need to set to proper values for these keys, according to your needs.
 
-    ln -s /usr/share/munin/plugins/PT100MK1_ PT100MK1_14BD3
+## Notes
+---
+YOCTOPUCE\_ is a universal plugin, which will most likely work for all yoctopuce sensors. If your sensors does not work, feel free to file a bug and please do add the following debug information:
+
+    wget -q -O - http://127.0.0.1:4444/api.json|python -mjson.tool
+    wget -q -O - http://127.0.0.1:4444/bySerial/<your-modulename>-<your-serial>/api.json|python -mjson.tool
 
 ## License
-----------
+---
 [[Back To Top]](#jump-to-section)
 
 Copyright © 2013 Sascha Curth

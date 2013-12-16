@@ -13,13 +13,13 @@ import json
 import sys
 import os
 
-measurementtype="carbonDioxide"
 apiuri='http://127.0.0.1:4444'
 scriptname=os.path.basename(__file__)
-modulename=scriptname.partition('_')[0]
+modulename=scriptname.partition('_')[2].partition('_')[0]
+serial=scriptname.partition('_')[2].partition('_')[2].partition('_')[0]
+measurementtype=scriptname.partition('_')[2].partition('_')[2].partition('_')[2]
 
 def initDeviceinfo():
-    serial=scriptname.partition('_')[2].partition('.')[0]
     deviceurl = '%s/bySerial/%s-%s/api.json' % (apiuri,modulename,serial)
     deviceresponse = urllib.urlopen(deviceurl)
     devicedata = json.loads(deviceresponse.read())
@@ -31,14 +31,24 @@ if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
     #%# capabilities=autoconf suggest
     print "yes"
 
-elif len(sys.argv) == 2 and sys.argv[1] == "suggest":
+elif len(sys.argv) >= 2 and sys.argv[1] == "suggest":
+    prefix=''
+    suffix=''
     huburl = '%s/api.json' % apiuri
     hubresponse = urllib.urlopen(huburl);
     hubdata = json.loads(hubresponse.read())
-    for key in hubdata["services"]["yellowPages"][''.join(measurementtype[0].upper() + measurementtype[1:])]:
-        if modulename in key["hardwareId"]:
-            serial=key["hardwareId"].partition('-')[2].partition('.')[0]
-            print "%s" % serial
+    for key in hubdata["services"]["yellowPages"]:
+        if key not in ["DataLogger","Network","Relay"]:
+            for measurementtype in hubdata["services"]["yellowPages"][key]:
+                if len(sys.argv) == 3 and sys.argv[2] == "env":
+                    prefix='  env.'
+                    print "[%s_%s]" % (scriptname.partition('_')[0],measurementtype["hardwareId"].replace('-','_').replace('.','_'))
+                    suffix='.warning 0'
+                    print "%s%s%s" % (prefix,measurementtype["hardwareId"].partition('.')[2],suffix)
+                    suffix='.critical 0'
+                    print "%s%s%s" % (prefix,measurementtype["hardwareId"].partition('.')[2],suffix)
+                else:
+                    print "%s" % measurementtype["hardwareId"].replace('-','_').replace('.','_')
 
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
     devicedata=initDeviceinfo()
@@ -50,21 +60,11 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
     print '%s.draw LINE1' % measurementtype
     print '%s.type GAUGE' % measurementtype
-    varname="%s_warning" % measurementtype
-    print '%s.warning %s' % (measurementtype,os.environ.get(varname))
-    varname="%s_critical" % measurementtype
-    print '%s.critical %s' % (measurementtype,os.environ.get(varname))
-
-    print '%slow.label Lowest %s value in %s' % (measurementtype,measurementtype,devicedata[measurementtype]["unit"])
-    print '%slow.draw LINE1' % measurementtype
-    print '%slow.type GAUGE' % measurementtype
-
-    print '%shigh.label Highest %s value in %s' % (measurementtype,measurementtype,devicedata[measurementtype]["unit"])
-    print '%shigh.draw LINE1' % measurementtype
-    print '%shigh.type GAUGE' % measurementtype
+    for thresholdtype in ["warning","critical"]:
+        varname="%s.%s" % (measurementtype,thresholdtype)
+        if os.environ.get(varname) is not None:
+            print '%s %s' % (varname,os.environ.get(varname))
 
 else:
     devicedata=initDeviceinfo()
     print '%s.value %s' % (measurementtype,devicedata[measurementtype]["advertisedValue"])
-    print '%shigh.value %d' % (measurementtype,(int(devicedata[measurementtype]["highestValue"]) / int(devicedata[measurementtype]["resolution"])))
-    print '%slow.value %d' % (measurementtype,(int(devicedata[measurementtype]["lowestValue"]) / int(devicedata[measurementtype]["resolution"])))
