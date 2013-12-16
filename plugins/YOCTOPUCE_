@@ -2,12 +2,6 @@
 #
 # Author: Sascha Curth
 #
-# sample config
-# [YCO2MK01_*]
-#   env.carbonDioxide_warning 1300
-#   env.carbonDioxide_critical 3000
-
-
 import urllib
 import json
 import sys
