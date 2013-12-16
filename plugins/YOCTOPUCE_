@@ -41,6 +41,7 @@ elif len(sys.argv) >= 2 and sys.argv[1] == "suggest":
                     print "%s%s%s" % (prefix,measurementtype["hardwareId"].partition('.')[2],suffix)
                     suffix='.critical 0'
                     print "%s%s%s" % (prefix,measurementtype["hardwareId"].partition('.')[2],suffix)
+                    print ''
                 else:
                     print "%s" % measurementtype["hardwareId"].replace('-','_').replace('.','_')
 
