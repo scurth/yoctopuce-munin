@@ -53,10 +53,10 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
     varname="%s.draw" % measurementtype
     if os.environ.get(varname) is None:
-        mtype='LINE1'
+        draw='LINE1'
     else:
-        mtype=os.environ.get(varname)
-    print '%s.type %s' % (measurementtype,mtype)
+        draw=os.environ.get(varname)
+    print '%s.draw %s' % (measurementtype,draw)
     varname="%s.type" % measurementtype
     if os.environ.get(varname) is None:
         mtype='GAUGE'
