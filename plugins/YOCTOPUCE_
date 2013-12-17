@@ -51,8 +51,18 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     print 'graph_category yoctopuce'
 
     print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
-    print '%s.draw LINE1' % measurementtype
-    print '%s.type GAUGE' % measurementtype
+    varname="%s.draw" % measurementtype
+    if os.environ.get(varname) is None:
+        mtype='LINE1'
+    else:
+        mtype=os.environ.get(varname)
+    print '%s.type %s' % (measurementtype,mtype)
+    varname="%s.type" % measurementtype
+    if os.environ.get(varname) is None:
+        mtype='GAUGE'
+    else:
+        mtype=os.environ.get(varname)
+    print '%s.type %s' % (measurementtype,mtype)
     for thresholdtype in ["warning","critical"]:
         varname="%s.%s" % (measurementtype,thresholdtype)
         if os.environ.get(varname) is not None:
