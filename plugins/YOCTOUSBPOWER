@@ -1,0 +1,56 @@
+#!/usr/bin/python
+#
+# Author: Sascha Curth
+#
+import urllib
+import json
+import sys
+import os
+
+apiuri='http://127.0.0.1:4444'
+scriptname=os.path.basename(__file__)
+modulename=scriptname.partition('_')[2].partition('_')[0]
+
+def initDeviceinfo(modulename):
+    deviceurl = '%s/bySerial/%s/api.json' % (apiuri,modulename)
+    deviceresponse = urllib.urlopen(deviceurl)
+    devicedata = json.loads(deviceresponse.read())
+    return devicedata
+
+if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
+    #Magic markers for munin autoconf
+    #%# family=auto
+    #%# capabilities=autoconf suggest
+    print "yes"
+
+elif len(sys.argv) == 2 and sys.argv[1] == "config":
+    huburl = '%s/api.json' % apiuri
+    hubresponse = urllib.urlopen(huburl);
+    hubdata = json.loads(hubresponse.read())
+    for key in hubdata["services"]["whitePages"]:
+        val=key["serialNumber"]
+        if val.find("VIRTHUB") == 0:
+            print 'graph_title %s' % (val)
+    print 'graph_vlabel Power Consumption'
+    print 'graph_category yoctopuce'
+    for key in hubdata["services"]["whitePages"]:
+        val=key["serialNumber"].replace('-','_')
+        if val.find("VIRTHUB") == -1:
+            print '%s.label power consumption of %s in mA' % (val,val)
+            print '%s.draw AREASTACK' % (val)
+            print '%s.type GAUGE' % (val)
+            for thresholdtype in ["warning","critical"]:
+                varname="%s.%s" % (val,thresholdtype)
+                if os.environ.get(varname) is not None:
+                    print '%s %s' % (varname,os.environ.get(varname))
+
+
+else:
+    huburl = '%s/api.json' % apiuri
+    hubresponse = urllib.urlopen(huburl);
+    hubdata = json.loads(hubresponse.read())
+    for key in hubdata["services"]["whitePages"]:
+        val=key["serialNumber"]
+        if val.find("VIRTHUB") == -1:
+            devicedata=initDeviceinfo(val)
+            print '%s.value %s' % (val.replace('-','_'),devicedata["module"]["usbCurrent"])
