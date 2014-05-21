@@ -29,6 +29,8 @@ if len(sys.argv) == 2 and sys.argv[1] == "autoconf":
     #%# family=auto
     #%# capabilities=autoconf suggest
     print "yes"
+elif len(sys.argv) >= 2 and sys.argv[1] == "suggest":
+    print scriptname
 
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
     huburl = '%s/api.json' % apiuri
