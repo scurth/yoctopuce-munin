@@ -12,7 +12,7 @@ scriptname=os.path.basename(__file__)
 
 parts=scriptname.split('_')
 
-if (len(parts) <= 7):
+if (len(parts) < 6 ):
     print "Please append the API IP to the scriptname, e.g. YOCTOPUCE_127_0_0_1_"
     exit()
 
