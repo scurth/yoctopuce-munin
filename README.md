@@ -13,9 +13,14 @@ Munin Plugins for yoctopuce.com sensors
 ---
 [[Back To Top]](#jump-to-section)
 
-Copy plugins from the 'plugins' folder:
+Copy plugins from the 'plugins' folder and add the IP of the yoctopuce virtualhub or YoctoHub, e.g:
 
-    cp plugins/YOCTOPUCE_ /usr/share/munin/plugins
+    cp plugins/YOCTOPUCE_ /usr/share/munin/plugins/YOCTOPUCE_127_0_0_1_
+    cp plugins/YOCTOPUCE_ /usr/share/munin/plugins/YOCTOPUCE_192_168_0_1_
+
+For USB power consumption:
+
+    cp plugins/YOCTOUSBPOWER /usr/share/munin/plugins/
 
 Create symlink for your devices (run as root)
     

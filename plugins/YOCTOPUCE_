@@ -7,11 +7,17 @@ import json
 import sys
 import os
 
-apiuri='http://127.0.0.1:4444'
 scriptname=os.path.basename(__file__)
-modulename=scriptname.partition('_')[2].partition('_')[0]
-serial=scriptname.partition('_')[2].partition('_')[2].partition('_')[0]
-measurementtype=scriptname.partition('_')[2].partition('_')[2].partition('_')[2]
+
+
+parts=scriptname.split('_')
+realIP ="%s.%s.%s.%s" % (parts[1],parts[2],parts[3],parts[4])
+apiuri='http://%s:4444' % realIP
+
+if ( len(parts) > 6):
+    modulename="%s" % parts[5]
+    serial="%s" % parts[6]
+    measurementtype="%s" % parts[7]
 
 def initDeviceinfo():
     deviceurl = '%s/bySerial/%s-%s/api.json' % (apiuri,modulename,serial)
