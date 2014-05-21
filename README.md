@@ -20,7 +20,8 @@ Copy plugins from the 'plugins' folder and add the IP of the yoctopuce virtualhu
 
 For USB power consumption:
 
-    cp plugins/YOCTOUSBPOWER /usr/share/munin/plugins/
+    cp plugins/YOCTOUSBPOWER_ /usr/share/munin/plugins/YOCTOUSBPOWER_127_0_0_1
+    cp plugins/YOCTOUSBPOWER_ /usr/share/munin/plugins/YOCTOUSBPOWER_10_0_1_17
 
 Create symlink for your devices (run as root)
     

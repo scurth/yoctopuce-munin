@@ -7,12 +7,19 @@ import json
 import sys
 import os
 
-apiuri='http://127.0.0.1:4444'
 scriptname=os.path.basename(__file__)
-modulename=scriptname.partition('_')[2].partition('_')[0]
 
-def initDeviceinfo(modulename):
-    deviceurl = '%s/bySerial/%s/api.json' % (apiuri,modulename)
+parts=scriptname.split('_')
+
+if ( len(parts) != 5 ):
+    print "Please append the API IP to the scriptname, e.g. YOCTOUSBPOWER_127_0_0_1"
+    exit()
+
+realIP ="%s.%s.%s.%s" % (parts[1],parts[2],parts[3],parts[4])
+apiuri='http://%s:4444' % realIP
+
+def initDeviceinfo(networkUrl):
+    deviceurl = '%s%s.json' % (apiuri,networkUrl)
     deviceresponse = urllib.urlopen(deviceurl)
     devicedata = json.loads(deviceresponse.read())
     return devicedata
@@ -52,5 +59,7 @@ else:
     for key in hubdata["services"]["whitePages"]:
         val=key["serialNumber"]
         if val.find("VIRTHUB") == -1:
-            devicedata=initDeviceinfo(val)
+            devicedata=initDeviceinfo(key["networkUrl"])
             print '%s.value %s' % (val.replace('-','_'),devicedata["module"]["usbCurrent"])
+
+
