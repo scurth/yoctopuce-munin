@@ -41,8 +41,10 @@ elif len(sys.argv) >= 2 and sys.argv[1] == "suggest":
     hubresponse = urllib.urlopen(huburl);
     hubdata = json.loads(hubresponse.read())
     for key in hubdata["services"]["yellowPages"]:
-        if key not in ["DataLogger","Network","Relay"]:
+        if key not in ["DataLogger","Network","Relay","HubPort","Files"]:
             for measurementtype in hubdata["services"]["yellowPages"][key]:
+                if (key == "Power"):
+                    print "%s_cosPhi" % measurementtype["hardwareId"].replace('-','_').replace('.','_')
                 if len(sys.argv) == 3 and sys.argv[2] == "env":
                     prefix='  env.'
                     print "[%s_%s]" % (scriptname.partition('_')[0],measurementtype["hardwareId"].replace('-','_').replace('.','_'))
@@ -81,4 +83,10 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
 
 else:
     devicedata=initDeviceinfo()
-    print '%s.value %s' % (measurementtype,devicedata[measurementtype]["advertisedValue"])
+# to access keys other then "advertisedValue", the key name need to be specified, e.g. YOCTOPUCE_10_0_1_17_YWATTMK1_20975_power_cosPhi
+    if (len(parts) == 9):
+        key=parts[8]
+    else:
+        key="advertisedValue"
+
+    print '%s.value %s' % (measurementtype,devicedata[measurementtype][key])
