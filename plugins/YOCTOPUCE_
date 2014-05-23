@@ -60,10 +60,16 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
     devicedata=initDeviceinfo()
     logicalname=devicedata["module"]["logicalName"]
     print 'graph_title %s %s' % (scriptname,logicalname)
-    print 'graph_vlabel %s in %s' % (''.join(measurementtype[0].upper() + measurementtype[1:]),devicedata[measurementtype]["unit"])
     print 'graph_category yoctopuce'
+    
+    if (len(parts) == 9):
+    # key specified manually
+        print 'graph_vlabel %s_%s' % (parts[7],parts[8])
+        print '%s.label raw value of %s' % (measurementtype,parts[8])
+    else:
+        print 'graph_vlabel %s in %s' % (''.join(measurementtype[0].upper() + measurementtype[1:]),devicedata[measurementtype]["unit"])
+        print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
 
-    print '%s.label Current value in %s' % (measurementtype,devicedata[measurementtype]["unit"])
     varname="%s.draw" % measurementtype
     if os.environ.get(varname) is None:
         draw='LINE1'
