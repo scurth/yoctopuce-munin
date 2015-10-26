@@ -1,0 +1,98 @@
+
+/*
+Author: Sascha Curth
+
+Simple nodejs test. It works, but is not as feature rich as the python module.
+
+First measurements on speed:
+
+time nodejs jsYOCTOPUCE_10_0_1_248_YCO2MK01_13FB0_carbonDioxide 
+carbonDioxide.value 656
+
+real	0m0.157s
+user	0m0.135s
+sys	0m0.012s
+
+time python pyYOCTOPUCE_10_0_1_248_YCO2MK01_13FB0_carbonDioxide 
+carbonDioxide.value 656
+
+real	0m0.060s
+user	0m0.034s
+sys	0m0.004s
+
+Development may be continued ... if ...
+
+*/
+
+var request = require("request")
+var path = require('path');
+
+var util = require('util');
+
+var scriptName = path.basename( process.argv[1])
+var parts=scriptName.split('_')
+
+// get IP from scriptname
+var realIP =(parts[1] + '.' + parts[2] + '.' + parts[3] + '.' + parts[4])
+var apiuri='http://' + realIP + ':4444'
+
+if (parts.length < 6) {
+  console.log("Please append the API IP to the scriptname, e.g. YOCTOPUCE_127_0_0_1_");
+  process.exit(1);
+}
+if (parts.length > 6) {
+    var modulename=parts[5]
+    var serial=parts[6]
+    var measurementtype=parts[7]
+}
+
+function suggest(){
+  var huburl=apiuri + "/api.json"
+  request(huburl, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      data = JSON.parse(body);
+
+      var yellowPages = data['services']['yellowPages']
+      var blacklist=["DataLogger","Network","Relay","HubPort","Files"];
+      for (key in yellowPages) {
+        if (blacklist.indexOf(key) == -1) {
+          console.log(yellowPages[key][0].hardwareId.replace('-','_').replace('.','_') );
+        }
+      }
+    } else {
+      console.log("An error occured: " + error)
+      process.exit(1);
+    }
+  })
+}
+
+if ( typeof process.argv[2] !== 'undefined' && process.argv[2] )
+{
+  var cmd1 = process.argv[2]
+  if (cmd1 = "suggest" ){ suggest();}
+} 
+else {
+   var deviceurl = (apiuri + '/bySerial/' + modulename + '-' + serial + '/api.json')
+// to access keys other then "advertisedValue", the key name need to be specified, e.g. YOCTOPUCE_10_0_1_17_YWATTMK1_20975_power_cosPhi
+    if (parts.length == 9){
+      key=parts[8]
+    } else {
+      key="advertisedValue"
+    }
+    request(deviceurl, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      data = JSON.parse(body);
+
+//    example convertformula "(7-parseFloat(data[measurementtype].advertisedValue)-10)"
+      if (process.env.convertformula) {
+        console.log(measurementtype + ".value " + eval(process.env.convertformula));
+      } else {
+        console.log(measurementtype + ".value " + data[measurementtype].advertisedValue);
+      }
+    } else {
+      console.log("An error occured: " + error)
+      process.exit(1);
+    }
+  })
+
+}
