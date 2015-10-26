@@ -1,4 +1,4 @@
-yocotpuce-munin
+yoctopuce-munin
 ===============
 
 Munin Plugins for yoctopuce.com sensors
