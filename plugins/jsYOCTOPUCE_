@@ -29,6 +29,8 @@ var path = require('path');
 
 var util = require('util');
 
+// __filename does not return the filename of a symlink, but returns the filename of the linked file.
+// As munin heavily uses symlinks, process.argv[1] is the ways to go.
 var scriptName = path.basename( process.argv[1])
 var parts=scriptName.split('_')
 
