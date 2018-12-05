@@ -35,7 +35,7 @@ elif len(sys.argv) >= 2 and sys.argv[1] == "suggest":
 elif len(sys.argv) == 2 and sys.argv[1] == "config":
     huburl = '%s/api.json' % apiuri
     hubresponse = urllib.urlopen(huburl);
-    hubdata = json.loads(unicode(hubresponse.read(),'latin-1')
+    hubdata = json.loads(unicode(hubresponse.read(),'latin-1'))
     print 'graph_title %s' % (hubdata["module"]["serialNumber"])
     print 'graph_vlabel Power Consumption'
     print 'graph_category yoctopuce'
@@ -54,7 +54,7 @@ elif len(sys.argv) == 2 and sys.argv[1] == "config":
 else:
     huburl = '%s/api.json' % apiuri
     hubresponse = urllib.urlopen(huburl);
-    hubdata = json.loads(unicode(hubresponse.read(),'latin-1')
+    hubdata = json.loads(unicode(hubresponse.read(),'latin-1'))
     for key in hubdata["services"]["whitePages"]:
         val=key["serialNumber"]
         if val.find("VIRTHUB") == -1:
